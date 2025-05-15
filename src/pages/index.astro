@@ -1,16 +1,27 @@
 ---
-
+import MainLayout from "@layout/MainLayout.astro";
+import { Icon } from "astro-icon/components";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout>
+    <div class='grid grid-cols-2 w-full h-[calc(100%_-_40px)]'>
+        <div class='flex items-center justify-center'>
+            <div
+                class='w-52 h-52 rounded-xl border-dashed border-4 border-gray-500 flex items-center justify-center hover:bg-gray-300 cursor-grab flex-col'
+                id='form_drop'>
+                <Icon name='uil:image-plus' class='text-6xl text-gray-500' />
+                <p class='text-gray-500'>Drop or Click</p>
+            </div>
+            <input class='-z-40 hidden' type='file' name='file_form' id='file_form' />
+        </div>
+        <div class='bg-red-400'>x</div>
+    </div>
+</MainLayout>
+
+<script>
+    const inp_file = document.getElementById("file_form");
+    const form_drop = document.getElementById("form_drop");
+    form_drop?.addEventListener("click", () => {
+        inp_file?.click();
+    });
+</script>

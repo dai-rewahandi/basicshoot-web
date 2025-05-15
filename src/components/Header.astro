@@ -1,0 +1,64 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<nav class='flex items-center justify-between h-25'>
+    <a class='text-3xl font-bold' href='/'><span class='text-orange-500'>#</span>BasicSoot</a>
+    <a class='hover:bg-indigo-950 source w-6 h-6 bg-black flex items-center justify-center rounded-[5px]' id='source' href=''>
+        <Icon name='uil:github' class='text-white' />
+    </a>
+</nav>
+
+<style>
+    .source {
+        position: relative;
+    }
+    .source::before {
+        content: "Source";
+        z-index: -100;
+        width: 0px;
+        padding: 0 0 0 5px;
+        position: absolute;
+        color: var(--color-white);
+        background-color: var(--color-black);
+        right: 1em;
+        border-radius: 5px;
+        overflow: hidden;
+        transition-duration: .7s;
+    }
+    .source:hover::before{
+        background: var(--color-indigo-950);
+        width: 100px;
+    }
+    .source.hide-label::before {
+        /* content: ""; */
+        animation: gone 6000ms alternate ease-in-out;
+    }
+    @keyframes gone {
+        0% {
+            width: 0px;
+        }
+        10% {
+            width: 100px;
+        }
+        20% {
+            width: 90px;
+        }
+        30% {
+            width: 100px;
+        }
+        80% {
+            width: 100px;
+        }
+        100% {
+            width: 0px;
+        }
+    }
+</style>
+
+<script>
+    setTimeout(() => {
+        const source = document.getElementById("source");
+        source?.classList.add("hide-label");
+    }, 2000);
+</script>
