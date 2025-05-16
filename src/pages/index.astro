@@ -14,14 +14,51 @@ import { Icon } from "astro-icon/components";
             </div>
             <input class='-z-40 hidden' type='file' name='file_form' id='file_form' />
         </div>
-        <div class='bg-red-400'>x</div>
+        <div class='flex items-center justify-center'>
+            <div class='border-4 border-dashed border-gray-500' id='image_loader'>
+                <img class='min-w-20 min-h-20' src='' alt='image' id='image' />
+            </div>
+        </div>
     </div>
 </MainLayout>
 
 <script>
-    const inp_file = document.getElementById("file_form");
+    const inp_file = document.getElementById("file_form") as HTMLInputElement;
     const form_drop = document.getElementById("form_drop");
+    const image_loader = document.getElementById("image_loader");
+
     form_drop?.addEventListener("click", () => {
         inp_file?.click();
+    });
+
+    const LoadImage = async (image: any) => {
+        if (image) {
+            const formdata = new FormData();
+            formdata.append("image", image);
+            const res = await fetch("/api/satori", {
+                method: "POST",
+                body: formdata,
+            });
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            if (!image_loader) return;
+            image_loader.innerHTML = `<img src="${url}" alt="Preview" />`;
+        }
+    };
+    inp_file?.addEventListener("change", () => {
+        const images = inp_file.files;
+        if(!images) return
+
+        LoadImage(images[0]);
+    });
+    form_drop?.addEventListener("dragover", (e) => {
+        e.preventDefault();
+    });
+    form_drop?.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const images = e.dataTransfer?.files;
+        if(!images) return
+        LoadImage(images[0]);
     });
 </script>
