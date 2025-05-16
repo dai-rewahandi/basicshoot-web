@@ -5,7 +5,8 @@ import { Icon } from "astro-icon/components";
 
 <MainLayout>
     <div class='grid grid-cols-2 w-full h-[calc(100%_-_40px)]'>
-        <div class='flex items-center justify-center'>
+        <div class='flex items-center justify-center flex-col gap-4'>
+            <input class='w-52 bg-gray-200 rounded-md text-gray-500 px-2.5' type='text' name='name' id='name' placeholder='Name..' />
             <div
                 class='w-52 h-52 rounded-xl border-dashed border-4 border-gray-500 flex items-center justify-center hover:bg-gray-300 cursor-grab flex-col'
                 id='form_drop'>
@@ -14,27 +15,31 @@ import { Icon } from "astro-icon/components";
             </div>
             <input class='-z-40 hidden' type='file' name='file_form' id='file_form' />
         </div>
-        <div class='flex items-center justify-center'>
-            <div class='border-4 border-dashed border-gray-500' id='image_loader'>
-                <img class='min-w-20 min-h-20' src='' alt='image' id='image' />
+        <div class='flex items-center justify-center flex-col gap-3'>
+            <div class='' id='image_loader'>
+                <img class='min-w-20 min-h-20' src='' alt='' id='image' />
             </div>
+            <a id="download" class="hidden bg-black text-white font-semibold px-4 rounded-md" download="capture.png">Download</a>
         </div>
     </div>
 </MainLayout>
 
 <script>
     const inp_file = document.getElementById("file_form") as HTMLInputElement;
+    const name = document.getElementById("name") as HTMLInputElement;
     const form_drop = document.getElementById("form_drop");
     const image_loader = document.getElementById("image_loader");
+    const download = document.getElementById("download")
 
     form_drop?.addEventListener("click", () => {
         inp_file?.click();
     });
 
-    const LoadImage = async (image: any) => {
-        if (image) {
+    const LoadImage = async (image: any, name: string) => {
+        if (image && name) {
             const formdata = new FormData();
             formdata.append("image", image);
+            formdata.append("name", name);
             const res = await fetch("/api/satori", {
                 method: "POST",
                 body: formdata,
@@ -43,14 +48,17 @@ import { Icon } from "astro-icon/components";
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
             if (!image_loader) return;
-            image_loader.innerHTML = `<img src="${url}" alt="Preview" />`;
+            image_loader.innerHTML = `<img src="${url}" alt="images" />`;
+            download?.classList.remove("hidden")
+            download?.setAttribute("href", url)
         }
+        if (!name) return alert("need name!");
     };
     inp_file?.addEventListener("change", () => {
         const images = inp_file.files;
-        if(!images) return
+        if (!images) return;
 
-        LoadImage(images[0]);
+        LoadImage(images[0], name.value);
     });
     form_drop?.addEventListener("dragover", (e) => {
         e.preventDefault();
@@ -58,7 +66,7 @@ import { Icon } from "astro-icon/components";
     form_drop?.addEventListener("drop", (e) => {
         e.preventDefault();
         const images = e.dataTransfer?.files;
-        if(!images) return
-        LoadImage(images[0]);
+        if (!images) return;
+        LoadImage(images[0], name.value);
     });
 </script>
